@@ -4,6 +4,7 @@ from flask import Flask
 from pybit.unified_trading import HTTP
 import pandas as pd
 import ta
+import datetime
 
 # Bybit API 설정
 api_key = "b3b9DkGWQaf3XOapet"
@@ -97,6 +98,7 @@ def place_order(side, qty, tp):
 def run_bot():
     set_leverage()
     while True:
+        print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ✅ 봇 작동 중...")  # ✅ 여기에 한 줄 추가
         df = get_candles()
         if df.empty:
             time.sleep(60)
