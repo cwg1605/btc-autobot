@@ -5,6 +5,8 @@ from pybit.unified_trading import HTTP
 import pandas as pd
 import ta
 import datetime
+import sys
+sys.stdout.reconfigure(line_buffering=True)
 
 # Bybit API 설정
 api_key = "b3b9DkGWQaf3XOapet"
