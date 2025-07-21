@@ -114,6 +114,8 @@ def run_bot():
         price = get_current_price()
         ema20, ema50, ema100 = latest["EMA20"], latest["EMA50"], latest["EMA100"]
 
+        print(f"🔄 조건 확인 중 | 현재가: {price:.1f}, 포지션: {'보유 중' if pos else '없음'}")
+        print(f"📊 EMA 배열: EMA20({ema20:.1f}), EMA50({ema50:.1f}), EMA100({ema100:.1f})")
         print(f"[1] 현재가: {price}, EMA20: {ema20}, EMA50: {ema50}, EMA100: {ema100}")
         print(f"[2] 💰 USDT 잔고: {get_balance()}")
 
