@@ -1,4 +1,4 @@
 flask
-pandas
 ta
+pandas
 pybit
