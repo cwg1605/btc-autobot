@@ -170,3 +170,6 @@ if __name__ == '__main__':
     t = threading.Thread(target=run_bot)
     t.start()
     app.run(host='0.0.0.0', port=8080)
+    
+
+#fly.io test
