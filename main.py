@@ -80,20 +80,20 @@ def cancel_orders():
     except Exception as e:
         print("❌ 주문 취소 실패:", e)
 
-def place_order(side, qty, tp):
+def place_order(side, qty, tp, sl):
     try:
         session.place_order(
-            category="linear", symbol=symbol, side=side,
-            order_type="Market", qty=qty, time_in_force="GoodTillCancel", reduce_only=False
+            category="linear",
+            symbol=symbol,
+            side=side,
+            order_type="Market",
+            qty=qty,
+            time_in_force="GoodTillCancel",
+            reduce_only=False,
+            takeProfit=round(tp, 1),
+            stopLoss=round(sl, 1)
         )
-        take_profit_price = round(tp, 1)
-        session.place_order(
-            category="linear", symbol=symbol,
-            side="Sell" if side == "Buy" else "Buy",
-            order_type="Limit", qty=qty, price=take_profit_price,
-            time_in_force="GoodTillCancel", reduce_only=True
-        )
-        print(f"✅ {side} 진입. 지정가 익절: {take_profit_price}")
+        print(f"✅ {side} 진입. 지정가 익절: {tp:.1f}, 스탑로스: {sl:.1f}")
     except Exception as e:
         print(f"❌ {side} 주문 실패:", e)
 
@@ -148,7 +148,7 @@ def run_bot():
                         time.sleep(60)
                         continue
                     tp = price + (price - ema50) * 1.5
-                    place_order("Buy", qty, tp)
+                    place_order("Buy", qty, tp, sl)
 
             elif ema20 < ema50 < ema100 and prev["close"] > prev["EMA20"] and latest["close"] < ema20:
                 if abs(price - ema50) / price > 0.001:
@@ -159,7 +159,7 @@ def run_bot():
                         time.sleep(60)
                         continue
                     tp = price - (ema50 - price) * 1.5
-                    place_order("Sell", qty, tp)
+                    place_order("Sell", qty, tp, sl)
 
         time.sleep(60)
 
