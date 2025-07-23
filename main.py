@@ -6,11 +6,12 @@ import pandas as pd
 import ta
 import datetime
 import sys
+
 sys.stdout.reconfigure(line_buffering=True)
 
-# Bybit API 설정
-api_key = "b3b9DkGWQaf3XOapet"
-api_secret = "sgQjqo3ocsVD0aN4Wws8pE9AGU5EpuFVLijJ"
+# 📌 Bybit API 설정
+api_key = "YOUR_API_KEY"
+api_secret = "YOUR_API_SECRET"
 symbol = "BTCUSDT"
 leverage = 25
 
@@ -105,7 +106,6 @@ def run_bot():
             time.sleep(60)
             continue
 
-        # EMA 계산
         df["EMA20"] = get_ema(df, 20)
         df["EMA50"] = get_ema(df, 50)
         df["EMA100"] = get_ema(df, 100)
@@ -117,14 +117,28 @@ def run_bot():
         ema20, ema50, ema100 = latest["EMA20"], latest["EMA50"], latest["EMA100"]
 
         pos = get_position()
-
         print(f"🔄 조건 확인 중 | 현재가: {price:.1f}, 포지션: {'보유 중' if pos else '없음'}")
         print(f"📊 EMA 배열: EMA20({ema20:.1f}), EMA50({ema50:.1f}), EMA100({ema100:.1f})")
         print(f"[1] 현재가: {price}, EMA20: {ema20}, EMA50: {ema50}, EMA100: {ema100}")
         print(f"[2] 💰 USDT 잔고: {get_balance()}")
 
-        # ✅ 진입 조건
-        if not pos:
+        if pos:
+            side = pos["side"]
+            entry_price = float(pos["entryPrice"])
+            size = float(pos["size"])
+            sl = ema50
+
+            if side == "Buy" and price < sl:
+                cancel_orders()
+                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=1)
+                print("🔻 롱 포지션 손절")
+
+            elif side == "Sell" and price > sl:
+                cancel_orders()
+                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=1)
+                print("🔺 숏 포지션 손절")
+
+        else:
             if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
                 if abs(price - ema50) / price > 0.001:
                     qty = get_quantity()
@@ -149,33 +163,8 @@ def run_bot():
                     sl = ema50
                     place_order("Sell", qty, tp, sl)
 
-        # ✅ 손절 조건 (시장가 강제 청산 + SL 재설정 로직)
-        else:
-            entry_price = float(pos["entryPrice"])
-            side = pos["side"]
-            size = float(pos["size"])
-            sl = ema50  # 최신 EMA50 기준
-
-            if side == "Buy" and price < sl:
-                print("🔻 롱 손절 조건 만족, 시장가 청산")
-                cancel_orders()
-                session.place_order(
-                    category="linear", symbol=symbol, side="Sell",
-                    order_type="Market", qty=size, time_in_force="GoodTillCancel",
-                    reduce_only=True, position_idx=1
-                )
-
-            elif side == "Sell" and price > sl:
-                print("🔺 숏 손절 조건 만족, 시장가 청산")
-                cancel_orders()
-                session.place_order(
-                    category="linear", symbol=symbol, side="Buy",
-                    order_type="Market", qty=size, time_in_force="GoodTillCancel",
-                    reduce_only=True, position_idx=1
-                )
-
         time.sleep(60)
-        
+
 @app.route('/')
 def home():
     return "Bybit BTCUSDT 자동매매 봇이 실행 중입니다."
@@ -184,4 +173,3 @@ if __name__ == '__main__':
     t = threading.Thread(target=run_bot)
     t.start()
     app.run(host='0.0.0.0', port=8080)
-    
