@@ -10,8 +10,8 @@ import sys
 sys.stdout.reconfigure(line_buffering=True)
 
 # 📌 Bybit API 설정
-api_key = "YOUR_API_KEY"
-api_secret = "YOUR_API_SECRET"
+api_key = "b3b9DkGWQaf3XOapet"
+api_secret = "sgQjqo3ocsVD0aN4Wws8pE9AGU5EpuFVLijJ"
 symbol = "BTCUSDT"
 leverage = 25
 
