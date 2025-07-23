@@ -130,12 +130,12 @@ def run_bot():
 
             if side == "Buy" and price < stop_loss:
                 cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True)
+                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
                 print("🔻 롱 포지션 손절")
 
             elif side == "Sell" and price > stop_loss:
                 cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True)
+                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
                 print("🔺 숏 포지션 손절")
 
         else:
