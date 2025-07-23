@@ -122,20 +122,20 @@ def run_bot():
         print(f"[1] 현재가: {price}, EMA20: {ema20}, EMA50: {ema50}, EMA100: {ema100}")
         print(f"[2] 💰 USDT 잔고: {get_balance()}")
 
-        if pos:
-            entry_price = float(pos["entryPrice"])
-            side = pos["side"]
-            stop_loss = ema50
-
-            if side == "Buy" and price < stop_loss:
-                cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
-                print("🔻 롱 포지션 손절")
-
-            elif side == "Sell" and price > stop_loss:
-                cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
-                print("🔺 숏 포지션 손절")
+#        if pos:
+#            entry_price = float(pos["entryPrice"])
+#            side = pos["side"]
+#            stop_loss = ema50
+#
+#            if side == "Buy" and price < stop_loss:
+#                cancel_orders()
+#                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
+#                print("🔻 롱 포지션 손절")
+#
+#            elif side == "Sell" and price > stop_loss:
+#                cancel_orders()
+#                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
+#                print("🔺 숏 포지션 손절")
 
         else:
             if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
