@@ -61,7 +61,10 @@ def get_quantity():
     if usdt == 0:
         return 0
     price = get_current_price()
-    qty = round((usdt * leverage) / price, 3)
+    
+    buffer_ratio = 0.98  # 수수료 + 여유 자금 확보 (2% 여유)
+    qty = round((usdt * leverage * buffer_ratio) / price, 3)
+    
     return qty
 
 def get_position():
