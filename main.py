@@ -83,15 +83,23 @@ def cancel_orders():
 
 def place_order(side, qty, tp, sl):
     try:
+        # Hedge Mode에서는 position_idx 명시 필요
+        if side == "Buy":
+            position_idx = 1  # 롱 포지션
+        else:
+            position_idx = 2  # 숏 포지션
+
         session.place_order(
-            category="linear", symbol=symbol,
+            category="linear",
+            symbol=symbol,
             side=side,
             order_type="Market",
             qty=qty,
             time_in_force="GoodTillCancel",
             reduce_only=False,
             takeProfit=round(tp, 1),
-            stopLoss=round(sl, 1)
+            stopLoss=round(sl, 1),
+            position_idx=position_idx   # ✅ 추가
         )
         print(f"✅ {side} 진입. TP: {tp}, SL: {sl}")
     except Exception as e:
