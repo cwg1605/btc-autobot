@@ -172,5 +172,3 @@ if __name__ == '__main__':
     t.start()
     app.run(host='0.0.0.0', port=8080)
     
-
-#fly.io test
