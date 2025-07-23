@@ -137,32 +137,32 @@ def run_bot():
 #                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=pos["size"], time_in_force="GoodTillCancel", reduce_only=True,position_idx=1)
 #                print("🔺 숏 포지션 손절")
 
-        else:
-            if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
-                if abs(price - ema50) / price > 0.001:
-                    qty = get_quantity()
-                    print("🧮 진입 수량:", qty)
-                    if qty == 0:
-                        print("⛔ 진입 수량이 0입니다.")
-                        time.sleep(60)
-                        continue
-                    tp = price + (price - ema50) * 1.5
-                    sl = ema50
-                    place_order("Buy", qty, tp, sl)
+#else:
+if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
+    if abs(price - ema50) / price > 0.001:
+        qty = get_quantity()
+        print("🧮 진입 수량:", qty)
+        if qty == 0:
+            print("⛔ 진입 수량이 0입니다.")
+            time.sleep(60)
+            continue
+        tp = price + (price - ema50) * 1.5
+        sl = ema50
+        place_order("Buy", qty, tp, sl)
 
-            elif ema20 < ema50 < ema100 and prev["close"] > prev["EMA20"] and latest["close"] < ema20:
-                if abs(price - ema50) / price > 0.001:
-                    qty = get_quantity()
-                    print("🧮 진입 수량:", qty)
-                    if qty == 0:
-                        print("⛔ 진입 수량이 0입니다.")
-                        time.sleep(60)
-                        continue
-                    tp = price - (ema50 - price) * 1.5
-                    sl = ema50
-                    place_order("Sell", qty, tp, sl)
+elif ema20 < ema50 < ema100 and prev["close"] > prev["EMA20"] and latest["close"] < ema20:
+    if abs(price - ema50) / price > 0.001:
+        qty = get_quantity()
+        print("🧮 진입 수량:", qty)
+        if qty == 0:
+            print("⛔ 진입 수량이 0입니다.")
+            time.sleep(60)
+            continue
+        tp = price - (ema50 - price) * 1.5
+        sl = ema50
+        place_order("Sell", qty, tp, sl)
 
-        time.sleep(60)
+time.sleep(60)
 
 @app.route('/')
 def home():
