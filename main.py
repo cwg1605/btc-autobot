@@ -99,6 +99,7 @@ def place_order(side, qty, tp):
 
 def run_bot():
     set_leverage()
+    pos = None
     while True:
         print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ✅ 봇 작동 중...")  # ✅ 여기에 한 줄 추가
         df = get_candles()
