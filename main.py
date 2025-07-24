@@ -134,6 +134,9 @@ def run_bot():
         print(f"[2] 💰 USDT 잔고: {get_balance()}")
 
         if pos:
+            if "entryPrice" not in pos or pos["entryPrice"] is None:
+    print("❗entryPrice 없음: 포지션 정보 무시")
+    return
             side = pos["side"]
             entry_price = float(pos["entryPrice"])
             size = float(pos["size"])
