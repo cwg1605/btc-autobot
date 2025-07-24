@@ -61,10 +61,8 @@ def get_quantity():
     if usdt == 0:
         return 0
     price = get_current_price()
-    
-    buffer_ratio = 0.95  # 수수료 + 여유 자금 확보 (2% 여유)
+    buffer_ratio = 0.95
     qty = round((usdt * leverage * buffer_ratio) / price, 3)
-    
     return qty
 
 def get_position():
@@ -86,12 +84,7 @@ def cancel_orders():
 
 def place_order(side, qty, tp, sl):
     try:
-        # Hedge Mode에서는 position_idx 명시 필요
-        if side == "Buy":
-            position_idx = 1  # 롱 포지션
-        else:
-            position_idx = 2  # 숏 포지션
-
+        position_idx = 1 if side == "Buy" else 2
         session.place_order(
             category="linear",
             symbol=symbol,
@@ -102,7 +95,7 @@ def place_order(side, qty, tp, sl):
             reduce_only=False,
             takeProfit=round(tp, 1),
             stopLoss=round(sl, 1),
-            position_idx=position_idx   # ✅ 추가
+            position_idx=position_idx
         )
         print(f"✅ {side} 진입. TP: {tp}, SL: {sl}")
     except Exception as e:
@@ -135,22 +128,22 @@ def run_bot():
 
         if pos:
             if "entryPrice" not in pos or pos["entryPrice"] is None:
-    print("❗entryPrice 없음: 포지션 정보 무시")
-    return
-            side = pos["side"]
-            entry_price = float(pos["entryPrice"])
-            size = float(pos["size"])
-            sl = ema50
+                print("❗entryPrice 없음: 포지션 정보 무시")
+            else:
+                side = pos["side"]
+                entry_price = float(pos["entryPrice"])
+                size = float(pos["size"])
+                sl = ema50
 
-            if side == "Buy" and price < sl:
-                cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=1)
-                print("🔻 롱 포지션 손절")
+                if side == "Buy" and price < sl:
+                    cancel_orders()
+                    session.place_order(category="linear", symbol=symbol, side="Sell", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=1)
+                    print("🔻 롱 포지션 손절")
 
-            elif side == "Sell" and price > sl:
-                cancel_orders()
-                session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=1)
-                print("🔺 숏 포지션 손절")
+                elif side == "Sell" and price > sl:
+                    cancel_orders()
+                    session.place_order(category="linear", symbol=symbol, side="Buy", order_type="Market", qty=size, time_in_force="GoodTillCancel", reduce_only=True, position_idx=2)
+                    print("🔺 숏 포지션 손절")
 
         else:
             if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
