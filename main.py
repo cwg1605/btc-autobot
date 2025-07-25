@@ -147,7 +147,7 @@ def run_bot():
 
         else:
             if ema20 > ema50 > ema100 and prev["close"] < prev["EMA20"] and latest["close"] > ema20:
-                if abs(price - ema50) / price > 0.001:
+                if abs(price - ema50) / price > 0.0015:
                     qty = get_quantity()
                     print("🧮 진입 수량:", qty)
                     if qty == 0:
@@ -159,7 +159,7 @@ def run_bot():
                     place_order("Buy", qty, tp, sl)
 
             elif ema20 < ema50 < ema100 and prev["close"] > prev["EMA20"] and latest["close"] < ema20:
-                if abs(price - ema50) / price > 0.001:
+                if abs(price - ema50) / price > 0.0015:
                     qty = get_quantity()
                     print("🧮 진입 수량:", qty)
                     if qty == 0:
